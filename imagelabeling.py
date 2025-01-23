@@ -20,6 +20,29 @@ def rename_images(directory):
         os.rename(os.path.join(directory, filename), os.path.join(directory, new_name))
         print(f"Renamed {filename} to {new_name}")
 
+def label_images(directory):
+    labels = {}
+    while True:
+        try:
+            start = int(input("Enter the start of the range (or -1 to finish): "))
+            if start == -1:
+                break
+            end = int(input("Enter the end of the range: "))
+            label = input("Enter the label (yes/no): ").strip().lower()
+            if label not in ['yes', 'no']:
+                print("Invalid label. Please enter 'yes' or 'no'.")
+                continue
+            for i in range(start, end + 1):
+                labels[f"{i}.jpg"] = label
+        except ValueError:
+            print("Invalid input. Please enter numeric values for the range.")
+    
+    # Write labels to a file
+    with open(os.path.join(directory, 'labels.txt'), 'w') as f:
+        for filename, label in labels.items():
+            f.write(f"{filename}: {label}\n")
+    print("Labels saved to labels.txt")
+
 # Example usage
 # rename_images('/path/to/your/directory')
 
@@ -35,3 +58,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     rename_images(directory)
+    label_images(directory)
