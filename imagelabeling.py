@@ -27,7 +27,13 @@ def label_images(directory):
             start = int(input("Enter the start of the range (or -1 to finish): "))
             if start == -1:
                 break
+            if start < 1:
+                print("Invalid input. Please enter a positive number.")
+                continue
             end = int(input("Enter the end of the range: "))
+            if end < start:
+                print("Invalid input. End of the range must be greater than or equal to the start.")
+                continue
             label = input("Enter the label (yes/no): ").strip().lower()
             if label not in ['yes', 'no']:
                 print("Invalid label. Please enter 'yes' or 'no'.")
