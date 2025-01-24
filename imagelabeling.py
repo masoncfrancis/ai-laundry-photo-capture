@@ -53,6 +53,9 @@ def label_images(directory):
 # rename_images('/path/to/your/directory')
 
 if __name__ == "__main__":
+    import sys
+    import os
+
     # accept directory path from user as argument when running script
     if len(sys.argv) != 2:
         print("Usage: python imagelabeling.py <directory>")
@@ -62,6 +65,12 @@ if __name__ == "__main__":
     if not os.path.isdir(directory):
         print(f"Error: {directory} is not a valid directory.")
         sys.exit(1)
-    
-    rename_images(directory)
-    label_images(directory)
+
+    choice = input("Do you want to renumber the files or label them? (renumber/label): ").strip().lower()
+    if choice == "renumber":
+        rename_images(directory)
+    elif choice == "label":
+        label_images(directory)
+    else:
+        print("Invalid choice. Please enter 'renumber' or 'label'.")
+        sys.exit(1)
