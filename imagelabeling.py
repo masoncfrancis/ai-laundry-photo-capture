@@ -1,12 +1,7 @@
-import os
-import time
-import sys
+import shutil
 
 def rename_images(directory):
-    # Get list of jpg files in the directory
     files = [f for f in os.listdir(directory) if f.endswith('.jpg')]
-    
-    # Check if there are no jpg files
     if not files:
         print("No jpg files found in the directory.")
         return
@@ -49,6 +44,30 @@ def label_images(directory):
             f.write(f"{filename}: {label}\n")
     print("Labels saved to labels.txt")
 
+def sort_labeled_files(directory):
+    yes_folder = os.path.join(directory, 'yes')
+    no_folder = os.path.join(directory, 'no')
+    os.makedirs(yes_folder, exist_ok=True)
+    os.makedirs(no_folder, exist_ok=True)
+
+    labels_file = os.path.join(directory, 'labels.txt')
+    if not os.path.isfile(labels_file):
+        print(f"Error: {labels_file} does not exist.")
+        sys.exit(1)
+
+    with open(labels_file, 'r') as f:
+        for line in f:
+            filename, label = line.strip().split(': ')
+            src = os.path.join(directory, filename)
+            if label == 'yes':
+                dst = os.path.join(yes_folder, filename)
+            elif label == 'no':
+                dst = os.path.join(no_folder, filename)
+            else:
+                continue
+            shutil.move(src, dst)
+            print(f"Moved {filename} to {label} folder")
+
 # Example usage
 # rename_images('/path/to/your/directory')
 
@@ -66,11 +85,13 @@ if __name__ == "__main__":
         print(f"Error: {directory} is not a valid directory.")
         sys.exit(1)
 
-    choice = input("Do you want to renumber the files or label them? (renumber/label): ").strip().lower()
+    choice = input("Do you want to renumber the files, label them, or sort labeled files? (renumber/label/sort): ").strip().lower()
     if choice == "renumber":
         rename_images(directory)
     elif choice == "label":
         label_images(directory)
+    elif choice == "sort":
+        sort_labeled_files(directory)
     else:
-        print("Invalid choice. Please enter 'renumber' or 'label'.")
+        print("Invalid choice. Please enter 'renumber', 'label', or 'sort'.")
         sys.exit(1)
