@@ -176,3 +176,4 @@ condaenv/
 images/
 venv*/
 temp/
+*.zip
