@@ -172,7 +172,7 @@ cython_debug/
 
 .idea/
 .vscode/
-
+condaenv/
 images/
 venv*/
 temp/
