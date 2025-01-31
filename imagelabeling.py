@@ -1,5 +1,6 @@
 import os
 import shutil
+from PIL import Image
 
 def rename_images(directory):
     files = [f for f in os.listdir(directory) if f.endswith('.jpg')]
@@ -82,12 +83,36 @@ def sort_labeled_files(directory):
             shutil.move(src, dst)
             print(f"Moved {filename} to {label} folder")
 
+def resave_images_as_jpeg(directory):
+    files = [f for f in os.listdir(directory) if f.lower().endswith(('.png', '.bmp', '.gif', '.tiff', '.jpg', '.jpeg'))]
+    if not files:
+        print("No image files found in the directory.")
+        return
+
+    errors = []
+    for filename in files:
+        file_path = os.path.join(directory, filename)
+        try:
+            with Image.open(file_path) as img:
+                new_filename = os.path.splitext(filename)[0] + '.jpg'
+                new_file_path = os.path.join(directory, new_filename)
+                img.convert('RGB').save(new_file_path, 'JPEG')
+                print(f"Converted {filename} to {new_filename}")
+        except Exception as e:
+            error_message = f"Failed to convert {filename}: {e}"
+            print(error_message)
+            errors.append(error_message)
+    
+    if errors:
+        print("\nErrors occurred during the conversion process:")
+        for error in errors:
+            print(error)
+
 # Example usage
 # rename_images('/path/to/your/directory')
 
 if __name__ == "__main__":
     import sys
-    import os
 
     # accept directory path from user as argument when running script
     if len(sys.argv) != 2:
@@ -99,13 +124,15 @@ if __name__ == "__main__":
         print(f"Error: {directory} is not a valid directory.")
         sys.exit(1)
 
-    choice = input("Do you want to renumber the files, label them, or sort labeled files? (renumber/label/sort): ").strip().lower()
+    choice = input("Do you want to renumber the files, label them, sort labeled files, or resave images as JPEGs? (renumber/label/sort/resave): ").strip().lower()
     if choice == "renumber":
         rename_images(directory)
     elif choice == "label":
         label_images(directory)
     elif choice == "sort":
         sort_labeled_files(directory)
+    elif choice == "resave":
+        resave_images_as_jpeg(directory)
     else:
-        print("Invalid choice. Please enter 'renumber', 'label', or 'sort'.")
+        print("Invalid choice. Please enter 'renumber', 'label', 'sort', or 'resave'.")
         sys.exit(1)
