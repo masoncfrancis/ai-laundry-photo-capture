@@ -44,8 +44,8 @@ def build_model():
     return model
 
 def train_model(model, train_generator, validation_generator, epochs=10):
-    steps_per_epoch = train_generator.samples // train_generator.batch_size
-    validation_steps = validation_generator.samples // validation_generator.batch_size
+    steps_per_epoch = len(train_generator)
+    validation_steps = len(validation_generator)
 
     history = model.fit(
         train_generator,
