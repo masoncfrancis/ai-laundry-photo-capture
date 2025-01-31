@@ -2,7 +2,7 @@ import os
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, Input
 
 def create_image_generators(directory):
     train_datagen = ImageDataGenerator(rescale=0.2, validation_split=0.2)
@@ -27,7 +27,8 @@ def create_image_generators(directory):
 
 def build_model():
     model = Sequential([
-        Conv2D(32, (3, 3), activation='relu', input_shape=(150, 150, 3)),
+        Input(shape=(150, 150, 3)),
+        Conv2D(32, (3, 3), activation='relu'),
         MaxPooling2D((2, 2)),
         Conv2D(64, (3, 3), activation='relu'),
         MaxPooling2D((2, 2)),
@@ -43,10 +44,13 @@ def build_model():
     return model
 
 def train_model(model, train_generator, validation_generator, epochs=10):
+    steps_per_epoch = train_generator.samples // train_generator.batch_size
+    validation_steps = validation_generator.samples // validation_generator.batch_size
+
     history = model.fit(
         train_generator,
-        steps_per_epoch=train_generator.samples // train_generator.batch_size,
-        validation_steps=validation_generator.samples // validation_generator.batch_size,
+        steps_per_epoch=steps_per_epoch,
+        validation_steps=validation_steps,
         epochs=epochs,
         validation_data=validation_generator
     )
