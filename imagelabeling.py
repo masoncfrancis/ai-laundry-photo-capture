@@ -1,3 +1,4 @@
+import os
 import shutil
 
 def rename_images(directory):
@@ -17,6 +18,16 @@ def rename_images(directory):
 
 def label_images(directory):
     labels = {}
+    existing_labels = set()
+    
+    # Read existing labels to avoid duplicates
+    labels_file_path = os.path.join(directory, 'labels.txt')
+    if os.path.exists(labels_file_path):
+        with open(labels_file_path, 'r') as f:
+            for line in f:
+                filename = line.split(':')[0].strip()
+                existing_labels.add(filename)
+    
     while True:
         try:
             start = int(input("Enter the start of the range (or -1 to finish): "))
@@ -34,15 +45,18 @@ def label_images(directory):
                 print("Invalid label. Please enter 'yes' or 'no'.")
                 continue
             for i in range(start, end + 1):
-                labels[f"{i}.jpg"] = label
+                filename = f"{i}.jpg"
+                if filename not in existing_labels:
+                    labels[filename] = label
+                    existing_labels.add(filename)
         except ValueError:
             print("Invalid input. Please enter numeric values for the range.")
     
-    # Write labels to a file
-    with open(os.path.join(directory, 'labels.txt'), 'w') as f:
+    # Append labels to a file
+    with open(labels_file_path, 'a') as f:
         for filename, label in labels.items():
             f.write(f"{filename}: {label}\n")
-    print("Labels saved to labels.txt")
+    print("Labels appended to labels.txt")
 
 def sort_labeled_files(directory):
     yes_folder = os.path.join(directory, 'yes')
