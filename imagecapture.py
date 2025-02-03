@@ -1,6 +1,9 @@
 import requests
 import time
 import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from a .env file
 
 def download_image(url, filename):
   """Downloads an image from the given URL and saves it to the specified filename."""
@@ -16,10 +19,14 @@ def download_image(url, filename):
     print(f"Error downloading {url}: {e}")
 
 if __name__ == "__main__":
-  urls = [
-      "http://192.168.0.199:8080/?action=snapshot_0",
-      "http://192.168.0.199:8080/?action=snapshot_1"
-  ]
+  urls = []
+  i = 1
+  while True:
+    url = os.getenv(f"URL_{i}")
+    if url is None:
+      break
+    urls.append(url)
+    i += 1
 
   try:
     while True:
