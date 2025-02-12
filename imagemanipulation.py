@@ -108,6 +108,41 @@ def resave_images_as_jpeg(directory):
         for error in errors:
             print(error)
 
+def crop_washer_image_directory(directory):
+    files = [f for f in os.listdir(directory) if f.lower().endswith(('.png', '.bmp', '.gif', '.tiff', '.jpg', '.jpeg'))]
+    if not files:
+        print("No image files found in the directory.")
+        return
+
+    for filename in files:
+        file_path = os.path.join(directory, filename)
+        crop_washer_image_percentage(file_path)
+
+def crop_washer_image_percentage(image_path):
+    left_percent = 0.625  
+    top_percent = 0.35   
+    right_percent = 0.745 
+    bottom_percent = 0.5 
+
+    try:
+        img = Image.open(image_path)
+        width, height = img.size
+
+        left = int(width * left_percent)
+        top = int(height * top_percent)
+        right = int(width * right_percent)
+        bottom = int(height * bottom_percent)
+
+
+        cropped_img = img.crop((left, top, right, bottom))
+        cropped_img.save(image_path)
+        print(f"Image cropped and saved to {image_path}")
+
+    except FileNotFoundError:
+        print(f"Error: Image file not found at {image_path}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 # Example usage
 # rename_images('/path/to/your/directory')
 
@@ -116,7 +151,7 @@ if __name__ == "__main__":
 
     # accept directory path from user as argument when running script
     if len(sys.argv) != 2:
-        print("Usage: python imagelabeling.py <directory>")
+        print("Usage: python imagemanipulation.py <directory>")
         sys.exit(1)
 
     directory = sys.argv[1]
@@ -124,7 +159,7 @@ if __name__ == "__main__":
         print(f"Error: {directory} is not a valid directory.")
         sys.exit(1)
 
-    choice = input("Do you want to renumber the files, label them, sort labeled files, or resave images as JPEGs? (renumber/label/sort/resave): ").strip().lower()
+    choice = input("Do you want to renumber the files, label them, sort labeled files, crop washer images, or resave images as JPEGs? (renumber/label/sort/cropwasher/resave): ").strip().lower()
     if choice == "renumber":
         rename_images(directory)
     elif choice == "label":
@@ -133,6 +168,8 @@ if __name__ == "__main__":
         sort_labeled_files(directory)
     elif choice == "resave":
         resave_images_as_jpeg(directory)
+    elif choice == "cropwasher":
+        crop_washer_image_directory(directory)
     else:
-        print("Invalid choice. Please enter 'renumber', 'label', 'sort', or 'resave'.")
+        print("Invalid choice. Please enter 'renumber', 'label', 'sort', 'cropwasher', or 'resave'.")
         sys.exit(1)
