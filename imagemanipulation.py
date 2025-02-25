@@ -143,6 +143,29 @@ def crop_washer_image_percentage(image_path):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+def generate_yolo_text_files(directory):
+    try:
+        start = int(input("Enter the start of the range: "))
+        end = int(input("Enter the end of the range: "))
+        content = input("Enter the contents for the YOLO text files: ").strip()
+
+        for i in range(start, end + 1):
+            filename = f"{i}.jpg"
+            file_path = os.path.join(directory, filename)
+            if os.path.exists(file_path):
+                text_filename = os.path.splitext(filename)[0] + '.txt'
+                text_file_path = os.path.join(directory, text_filename)
+                with open(text_file_path, 'w') as f:
+                    f.write(content)
+                print(f"Generated {text_filename} with provided content.")
+            else:
+                print(f"File {filename} does not exist. Skipping.")
+
+    except ValueError:
+        print("Invalid input. Please enter numeric values for the range.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
 # Example usage
 # rename_images('/path/to/your/directory')
 
@@ -159,7 +182,7 @@ if __name__ == "__main__":
         print(f"Error: {directory} is not a valid directory.")
         sys.exit(1)
 
-    choice = input("Do you want to renumber the files, label them, sort labeled files, crop washer images, or resave images as JPEGs? (renumber/label/sort/cropwasher/resave): ").strip().lower()
+    choice = input("Do you want to renumber the files, label them, sort labeled files, crop washer images, resave images as JPEGs, or generate YOLO text files? (renumber/label/sort/cropwasher/resave/generateyolo): ").strip().lower()
     if choice == "renumber":
         rename_images(directory)
     elif choice == "label":
@@ -170,6 +193,8 @@ if __name__ == "__main__":
         resave_images_as_jpeg(directory)
     elif choice == "cropwasher":
         crop_washer_image_directory(directory)
+    elif choice == "generateyolo":
+        generate_yolo_text_files(directory)
     else:
-        print("Invalid choice. Please enter 'renumber', 'label', 'sort', 'cropwasher', or 'resave'.")
+        print("Invalid choice. Please enter 'renumber', 'label', 'sort', 'cropwasher', 'resave', or 'generateyolo'.")
         sys.exit(1)
