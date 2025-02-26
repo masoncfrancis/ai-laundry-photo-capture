@@ -1,0 +1,9 @@
+train: ./in/images/train/ 
+val:  ./in/images/val/
+test: ./in/images/test/
+
+# number of classes
+nc: 1
+
+# class names
+names: ["controlpanel"]

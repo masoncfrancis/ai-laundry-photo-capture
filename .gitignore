@@ -177,3 +177,8 @@ images/
 venv*/
 temp/
 *.zip
+
+# working image dirs
+images/
+tempimages/
+working/
