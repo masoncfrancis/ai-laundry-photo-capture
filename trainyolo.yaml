@@ -1,6 +1,6 @@
-train: ./in/images/train/ 
-val:  ./in/images/val/
-test: ./in/images/test/
+train: D:\Users\MasonFrancis\OneDrive\Coding\photocaptureforai\working\in\images\train\
+val:  D:\Users\MasonFrancis\OneDrive\Coding\photocaptureforai\working\in\images\val
+test: D:\Users\MasonFrancis\OneDrive\Coding\photocaptureforai\working\in\images\test\
 
 # number of classes
 nc: 1
