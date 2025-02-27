@@ -11,7 +11,7 @@ I could use a machine learning model to decide if it is a control panel or not. 
 Make sure to install pytorch before installing
 ```
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
-
+```
 
 ## train
 
