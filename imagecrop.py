@@ -8,7 +8,7 @@ from ultralytics import YOLO
 def main(in_dir, out_dir):
     # Load a model
     print("Loading model...")
-    model = YOLO("runs/detect/train3/weights/best.pt")  # my trained model
+    model = YOLO("runs/detect/train/weights/best.pt")  # my trained model
 
     # make sure out dir exists and make it if it doesn't
     if not os.path.exists(out_dir):
