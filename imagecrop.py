@@ -1,12 +1,14 @@
 
 import os
 import sys
+import json
+from PIL import Image
 from ultralytics import YOLO
 
 def main(in_dir, out_dir):
     # Load a model
     print("Loading model...")
-    model = YOLO("runs/detect/train/weights/best.pt")  # my trained model
+    model = YOLO("runs/detect/train3/weights/best.pt")  # my trained model
 
     # make sure out dir exists and make it if it doesn't
     if not os.path.exists(out_dir):
@@ -28,17 +30,31 @@ def main(in_dir, out_dir):
         # Process results
         for result in results:
             boxes = result.boxes  # Boxes object for bounding box outputs
-            # masks = result.masks  # Masks object for segmentation masks outputs
-            # keypoints = result.keypoints  # Keypoints object for pose outputs
-            # probs = result.probs  # Probs object for classification outputs
-            # obb = result.obb  # Oriented boxes object for OBB outputs
-
-            filename = result.path.split("/")[-1]
+            
+            # get filename, splitting the path by / or \ depending on OS
+            filename = result.path.split("/")[-1] if "/" in result.path else result.path.split("\\")[-1]
 
             if len(result.boxes) > 0:
-                # Crop the image using the only bounding box
-                result.save_crop(save_dir=out_dir, file_name=filename)
-                print(f"Image cropped and saved to {out_dir}")
+                boxCoords = json.loads(result.to_json())[0]["box"]
+            x1 = boxCoords["x1"]
+            y1 = boxCoords["y1"]
+            x2 = boxCoords["x2"]
+            y2 = boxCoords["y2"]
+
+            # Use pillow to crop the image
+            image = Image.open(result.path)
+            xSize = x2 - x1
+            ySize = y2 - y1
+
+            # Add space around bounding box to make the output image 275x200
+            xBuffer = (275 - xSize) // 2
+            yBuffer = (200 - ySize) // 2
+
+            # Crop the image
+            croppedImage = image.crop((x1 - xBuffer, y1 - yBuffer, x2 + xBuffer, y2 + yBuffer))
+            croppedImage.save(os.path.join(out_dir, "cropped" + filename))
+            print(f"Image cropped and saved as cropped{filename}.")
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
