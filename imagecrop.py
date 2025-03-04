@@ -47,11 +47,13 @@ def main(in_dir, out_dir):
             ySize = y2 - y1
 
             # Add space around bounding box to make the output image 275x200
-            xBuffer = (275 - xSize) // 2
-            yBuffer = (200 - ySize) // 2
+            xBufferLeft = ((275 - xSize) // 2) + ((275 - xSize) % 2) # adds remainder of division operation to left buffer to make sure image is 275x200
+            xBufferRight = (275 - xSize) // 2
+            yBufferTop = ((200 - ySize) // 2) + ((200 - ySize) % 2)  # adds remainder of division operation to top buffer to make sure image is 275x200
+            yBufferBottom = (200 - ySize) // 2 
 
             # Crop the image
-            croppedImage = image.crop((x1 - xBuffer, y1 - yBuffer, x2 + xBuffer, y2 + yBuffer))
+            croppedImage = image.crop((x1 - xBufferLeft, y1 - yBufferTop, x2 + xBufferRight, y2 + yBufferBottom))
             croppedImage.save(os.path.join(out_dir, "cropped" + filename))
             print(f"Image cropped and saved as cropped{filename}.")
 
