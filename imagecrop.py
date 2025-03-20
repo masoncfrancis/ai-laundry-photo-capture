@@ -54,8 +54,8 @@ def main(in_dir, out_dir):
 
             # Crop the image
             croppedImage = image.crop((x1 - xBufferLeft, y1 - yBufferTop, x2 + xBufferRight, y2 + yBufferBottom))
-            croppedImage.save(os.path.join(out_dir, "cropped" + filename))
-            print(f"Image cropped and saved as cropped{filename}.")
+            croppedImage.save(os.path.join(out_dir, filename))
+            print(f"Image cropped and saved as {filename}.")
 
 
 if __name__ == "__main__":
