@@ -1,21 +1,48 @@
-import os
-import shutil
 from PIL import Image
+import os
+
 
 def rename_images(directory):
     files = [f for f in os.listdir(directory) if f.endswith('.jpg')]
     if not files:
         print("No jpg files found in the directory.")
         return
-    
-    # Sort files by the timestamp in their filenames
-    files.sort(key=lambda x: int(x.split('_')[1].split('.')[0]))
-    
-    # Rename files
-    for i, filename in enumerate(files):
+
+    file_data = []
+    for file in files:
+        file_path = os.path.join(directory, file)
+        try:
+            # Try to extract timestamp from filename
+            parts = file.split('_')
+            if len(parts) > 1 and parts[1].split('.')[0].isdigit():
+                timestamp = int(parts[1].split('.')[0])
+            else:
+                # Fallback to file creation time
+                creation_time = os.path.getctime(file_path)
+                if creation_time:
+                    timestamp = int(creation_time)
+                else:
+                    print(f"Skipping file with no valid timestamp: {file}")
+                    continue
+            file_data.append((file, timestamp))
+        except Exception as e:
+            print(f"Error processing file {file}: {e}")
+
+    # Sort files by timestamp
+    file_data.sort(key=lambda x: x[1])
+
+    # Rename files to temporary names to avoid conflicts
+    temp_names = []
+    for i, (filename, _) in enumerate(file_data):
+        temp_name = f"temp_{i + 1}.jpg"
+        os.rename(os.path.join(directory, filename), os.path.join(directory, temp_name))
+        temp_names.append(temp_name)
+
+    # Rename temporary files to final names
+    for i, temp_name in enumerate(temp_names):
         new_name = f"{i + 1}.jpg"
-        os.rename(os.path.join(directory, filename), os.path.join(directory, new_name))
-        print(f"Renamed {filename} to {new_name}")
+        os.rename(os.path.join(directory, temp_name), os.path.join(directory, new_name))
+        print(f"Renamed {temp_name} to {new_name}")
 
 def label_images(directory):
     labels = {}
